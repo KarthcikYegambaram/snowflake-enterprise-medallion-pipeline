@@ -1,1 +1,26 @@
 
+-- ============================================================
+-- CREATE FACT TABLE
+-- ============================================================
+
+CREATE OR REPLACE TABLE KARTHICKY_DB."3_GOLD".FACT_SALES (
+
+    FACT_SK NUMBER AUTOINCREMENT,
+
+    TRANSACTION_ID NUMBER,
+
+    BRANCH_SK NUMBER,
+    CUSTOMER_SK NUMBER,
+    MEDICINE_SK NUMBER,
+    SUPPLIER_SK NUMBER,
+
+    QUANTITY NUMBER,
+    LINE_TOTAL_LKR NUMBER(18,2),
+
+    FACT_HASH STRING,
+
+    _IS_SOFT_DELETED BOOLEAN DEFAULT FALSE,
+
+    _LOADED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+
+);
