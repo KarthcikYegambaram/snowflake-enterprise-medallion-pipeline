@@ -1,107 +1,111 @@
-# Pharma Sales Medallion Architecture Pipeline
+# Snowflake Enterprise Medallion Architecture Pipeline
 
-End-to-end Snowflake Data Engineering project implementing:
+![Snowflake](https://img.shields.io/badge/Snowflake-Data%20Warehouse-blue)
+![SQL](https://img.shields.io/badge/SQL-Advanced-green)
+![CDC](https://img.shields.io/badge/CDC-Streams%20%26%20Tasks-orange)
+![Architecture](https://img.shields.io/badge/Architecture-Medallion-purple)
 
-- Medallion Architecture
-- Incremental Loading
-- CDC using Streams
-- Task Automation
-- SCD Type 2
-- Star Schema Modeling
+## Project Overview
 
----
+This project demonstrates a complete enterprise-grade Medallion Architecture implementation in Snowflake using:
 
-# Architecture
+- Bronze, Silver, Gold layers
+- CDC (Change Data Capture)
+- Snowflake Streams
+- Snowflake Tasks
+- SCD Type 2 Dimensions
+- Soft Deletes
+- Audit Logging
+- Data Quality Validation
+- Fact and Dimension Modeling
 
-Source → Bronze → Silver → Gold
+The pipeline processes pharmaceutical sales transactional data and supports:
 
-## Layers
+- Inserts
+- Updates
+- Deletes
+- Soft Deletes
+- Incremental Loads
+- Historical Tracking
+
+## Architecture
+
+![Architecture](images/medallion-architecture.png)
+
 
 ### Bronze Layer
-- Raw ingestion
-- Stream-based CDC
-- Audit columns
-- Batch tracking
+
+Raw ingestion layer storing CDC records directly from source tables.
+
+Features:
+- Streams-based ingestion
+- Raw historical storage
+- Metadata tracking
+- Hash diff generation
+- Batch ID tracking
 
 ### Silver Layer
+
+Validated and transformed layer implementing business rules.
+
+Features:
 - Data cleansing
-- Standardization
-- Validation
-- Rejected records handling
+- Validation checks
+- Reject handling
+- Soft deletes
+- Incremental merge logic
 
 ### Gold Layer
-- Dimension tables
-- Fact tables
-- SCD Type 2
-- Analytics-ready star schema
 
----
+Business-ready dimensional model.
 
-# Technologies Used
+Features:
+- Star schema
+- SCD Type 2 dimensions
+- Fact table loading
+- Historical tracking
+- Analytics-ready model
+
+## CDC Features
+
+The project supports:
+
+- INSERT handling
+- UPDATE handling
+- DELETE handling
+- SOFT DELETE implementation
+- HASH DIFF change detection
+- Incremental processing
+
+## SCD Type 2 Implementation
+
+Dimensions support full historical tracking using:
+
+- _IS_CURRENT
+- _EFFECTIVE_FROM
+- _EFFECTIVE_TO
+
+## Technologies Used
 
 - Snowflake
 - SQL
 - Streams
 - Tasks
-- SCD Type 2
+- Change Data Capture (CDC)
+- Data Warehousing
+- Medallion Architecture
 - Star Schema
+- SCD Type 2
 
----
+## Key Engineering Concepts
 
-# Features
-
-- Incremental data processing
-- Automated pipeline execution
-- Historical tracking using SCD2
-- Data quality validation
-- Fact and dimension modeling
-
----
-
-# Project Flow
-
-1. Source table ingestion
-2. Bronze raw storage
-3. Silver cleansing & validation
-4. Gold dimension loading
-5. Fact table loading
-6. Automated task orchestration
-
----
-
-# Pipeline Components
-
-## Streams
-Used for CDC and incremental processing.
-
-## Tasks
-Used for scheduling and automation.
-
-## SCD Type 2
-Implemented for:
-- DIM_BRANCH
-- DIM_MEDICINE
-
----
-
-# Example Fact Table Metrics
-
-- Quantity Sold
-- Unit Price
-- Discount Rate
-- Line Total
-
----
-
-# Future Improvements
-
-- Snowpipe integration
-- DBT transformation layer
-- Power BI dashboards
-- CI/CD deployment
-
----
-
-# Author
-
-Karthick Yegambaram
+- Enterprise Data Warehousing
+- Incremental Data Loading
+- CDC Pipelines
+- Streams & Tasks
+- Medallion Architecture
+- SCD Type 2
+- Data Validation
+- Audit Logging
+- Dimensional Modeling
+- ETL/ELT
