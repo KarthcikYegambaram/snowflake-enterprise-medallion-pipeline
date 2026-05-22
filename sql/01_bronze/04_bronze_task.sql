@@ -1,1 +1,158 @@
 
+-- ============================================================
+-- BRONZE TASK
+-- ============================================================
+
+CREATE OR REPLACE TASK KARTHICKY_DB.PUBLIC.TASK_LOAD_BRONZE
+
+WAREHOUSE = COMPUTE_WH
+SCHEDULE = '1 MINUTE'
+
+WHEN SYSTEM$STREAM_HAS_DATA(
+'KARTHICKY_DB.PUBLIC.STREAM_PHARMA_SALES_RAW'
+)
+
+AS
+
+BEGIN
+
+LET v_batch_id VARCHAR := UUID_STRING();
+LET v_rows_inserted NUMBER := 0;
+
+INSERT INTO KARTHICKY_DB."1_BRONZE".PHARMA_SALES_RAW (
+
+    TRANSACTION_ID,
+    TRANSACTION_DATE,
+
+    BRANCH_ID,
+    BRANCH_NAME,
+    DISTRICT,
+    PROVINCE,
+
+    PAYMENT_METHOD,
+
+    CUSTOMER_GENDER,
+    CUSTOMER_AGE,
+    CUSTOMER_CITY,
+
+    MEDICINE_ID,
+    MEDICINE_NAME,
+    GENERIC_NAME,
+    MEDICINE_CATEGORY,
+    DOSAGE_FORM,
+    STRENGTH_MG,
+    PACK_SIZE,
+
+    SUPPLIER_NAME,
+
+    PRESCRIPTION_REQUIRED,
+
+    BATCH_NO,
+    EXPIRY_DATE,
+
+    QUANTITY,
+    UNIT_PRICE_LKR,
+    DISCOUNT_RATE,
+    LINE_TOTAL_LKR,
+
+    YEAR,
+    MONTH,
+
+    _CDC_ACTION,
+    _IS_UPDATE,
+    _IS_SOFT_DELETED,
+
+    _HASH_DIFF,
+
+    _LOADED_AT,
+    _BATCH_ID
+)
+
+SELECT
+
+    TRANSACTION_ID,
+    TRANSACTION_DATE,
+
+    BRANCH_ID,
+    BRANCH_NAME,
+    DISTRICT,
+    PROVINCE,
+
+    PAYMENT_METHOD,
+
+    CUSTOMER_GENDER,
+    CUSTOMER_AGE,
+    CUSTOMER_CITY,
+
+    MEDICINE_ID,
+    MEDICINE_NAME,
+    GENERIC_NAME,
+    MEDICINE_CATEGORY,
+    DOSAGE_FORM,
+    STRENGTH_MG,
+    PACK_SIZE,
+
+    SUPPLIER_NAME,
+
+    PRESCRIPTION_REQUIRED,
+
+    BATCH_NO,
+    EXPIRY_DATE,
+
+    QUANTITY,
+    UNIT_PRICE_LKR,
+    DISCOUNT_RATE,
+    LINE_TOTAL_LKR,
+
+    YEAR,
+    MONTH,
+
+    METADATA$ACTION,
+    METADATA$ISUPDATE,
+
+    CASE
+        WHEN METADATA$ACTION='DELETE'
+        THEN TRUE
+        ELSE FALSE
+    END,
+
+    SHA2(
+        CONCAT_WS('|',
+            TRANSACTION_ID,
+            BRANCH_NAME,
+            CUSTOMER_CITY,
+            MEDICINE_NAME,
+            LINE_TOTAL_LKR
+        )
+    ),
+
+    CURRENT_TIMESTAMP(),
+    :v_batch_id
+
+FROM KARTHICKY_DB.PUBLIC.STREAM_PHARMA_SALES_RAW;
+
+v_rows_inserted := SQLROWCOUNT;
+
+INSERT INTO KARTHICKY_DB."2_SILVER".PIPELINE_AUDIT_LOG
+(
+    TASK_NAME,
+    LAYER,
+    ACTION,
+    ROWS_PROCESSED,
+    ROWS_INSERTED,
+    STATUS,
+    BATCH_ID
+)
+
+VALUES
+(
+    'TASK_LOAD_BRONZE',
+    'BRONZE',
+    'INSERT',
+    :v_rows_inserted,
+    :v_rows_inserted,
+    'SUCCESS',
+    :v_batch_id
+);
+
+END;
