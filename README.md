@@ -520,8 +520,4 @@ data-warehouse
 analytics-engineering
 ```
 
----
 
-# License
-
-This project is licensed under the MIT License.
