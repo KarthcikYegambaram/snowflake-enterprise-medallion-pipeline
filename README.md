@@ -32,7 +32,6 @@ The pipeline processes pharmaceutical sales transactional data and supports:
 
 ![Architecture](images/medallion-architecture.png)
 
-
 ### Bronze Layer
 
 Raw ingestion layer storing CDC records directly from source tables.
